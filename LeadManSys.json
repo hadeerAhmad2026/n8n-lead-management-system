@@ -1,0 +1,217 @@
+{
+  "name": "Project1_ClothesPage",
+  "nodes": [
+    {
+      "parameters": {
+        "formTitle": "Customer Data Collection",
+        "formDescription": "Hello, If you are interested in our offers, please submit this form",
+        "formFields": {
+          "values": [
+            {
+              "fieldLabel": "Name",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "Your phone number",
+              "requiredField": true
+            },
+            {
+              "fieldLabel": "e-mail address"
+            },
+            {
+              "fieldLabel": "what kind of clothes are you interested in?",
+              "fieldType": "checkbox",
+              "fieldOptions": {
+                "values": [
+                  {
+                    "option": "Men"
+                  },
+                  {
+                    "option": "women"
+                  },
+                  {
+                    "option": "Kids"
+                  }
+                ]
+              }
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.formTrigger",
+      "typeVersion": 2.5,
+      "position": [
+        -624,
+        -144
+      ],
+      "id": "b769a824-78f5-491c-8073-08726be9a9b1",
+      "name": "On form submission",
+      "webhookId": "465da802-3c3b-48e0-a7a4-e381d525263a"
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "https://docs.google.com/spreadsheets/d/1C9IH17Jyj6JjSpR3AwhyF3fnYpHU2WisQvAcV5EBkHE/edit?gid=0#gid=0",
+          "mode": "url"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1C9IH17Jyj6JjSpR3AwhyF3fnYpHU2WisQvAcV5EBkHE/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.Name }}",
+            "Phone": "={{ $json[\"Your phone number\"] }}",
+            "e-mail": "={{ $json[\"e-mail address\"] }}",
+            "Submission time": "={{ $json.submittedAt }}",
+            "Interest": "={{ $json[\"what kind of clothes are you interested in?\"] }}",
+            "Lead ID": "==\"LEAD-\"&TEXT(ROW()-1,\"0000\")"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Phone",
+              "displayName": "Phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "e-mail",
+              "displayName": "e-mail",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Interest",
+              "displayName": "Interest",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Submission time",
+              "displayName": "Submission time",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "Lead ID",
+              "displayName": "Lead ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        -368,
+        -144
+      ],
+      "id": "d510523a-abcf-411b-80e3-2607d62b1d1f",
+      "name": "Append row in sheet",
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "HPaH4aFfIG0XbbsL",
+          "name": "sheetAppend"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "send",
+        "phoneNumberId": "1179543258571118",
+        "recipientPhoneNumber": "201113416971",
+        "textBody": "={{ $json.Name }}\n{{ $json['Your phone number'] }}{{ $json['e-mail address'] }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.whatsApp",
+      "typeVersion": 1.1,
+      "position": [
+        -384,
+        16
+      ],
+      "id": "6f5b56ec-7449-4076-99d9-afaa33de7881",
+      "name": "Send message",
+      "webhookId": "5e800a06-9f4a-4254-8d70-cedb7f736112",
+      "credentials": {
+        "whatsAppApi": {
+          "id": "fIKOWbxmeIv7jktM",
+          "name": "testWA"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "On form submission": {
+      "main": [
+        [
+          {
+            "node": "Append row in sheet",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Send message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append row in sheet": {
+      "main": [
+        []
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "9aeab81d-6fa0-4da9-9a2f-750a56cff62f",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "3e6b29054a1dcf56ed39cbda5f6b1a3a28d21b9a46c98d742f6a565fcbe4dfb4"
+  },
+  "id": "4cuMP11z42lFXJtW",
+  "tags": []
+}
